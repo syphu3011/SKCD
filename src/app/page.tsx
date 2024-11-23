@@ -1,101 +1,53 @@
-import Image from "next/image";
+import TrangChu from "@/pages/trang-chu";
+import IHeader from "@/pages/trang-chu/components/1.Header/interfaces/IHeader";
+import IFooter from "@/pages/trang-chu/components/3.Footer/interfaces/IFooter";
+import { API_TRANG_CHU, BASE_API_URL } from "@/utils/Const";
 
-export default function Home() {
+// Định nghĩa kiểu dữ liệu cho props
+interface IData {
+  Header: IHeader, // Đảm bảo Header là IHeader
+  noi_dung: [],
+  Footer: IFooter
+}
+
+async function Home() {
+  const res = await fetch(BASE_API_URL + API_TRANG_CHU);
+  if (!res.ok) {
+    throw new Error('Lấy trang chủ thất bại');
+  }
+  const data: IData = await res.json();
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div>
+      <TrangChu Header={data.Header} NoiDung={data.noi_dung} Footer={data.Footer}/>
     </div>
   );
-}
+};
+
+// // Định nghĩa getServerSideProps để lấy dữ liệu từ API
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   try {
+//     const res = await fetch(BASE_URL + API_TRANG_CHU); // Gọi API trang chủ
+//     if (!res.ok) {
+//       throw new Error('Lấy trang chủ thất bại');
+//     }
+
+//     const data = await res.json();
+//     console.log(data); // Kiểm tra dữ liệu trả về từ API
+
+//     // Trả về prop Header từ dữ liệu API
+//     return {
+//       props: {
+//         Header: data.Header || {}, // Đảm bảo trả về Header, mặc định là đối tượng rỗng nếu không có
+//       },
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       props: {
+//         Header: {}, // Trả về Header rỗng nếu có lỗi
+//       },
+//     };
+//   }
+// };
+
+export default Home;
