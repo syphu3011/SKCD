@@ -48,34 +48,45 @@ const Search = () => {
   };
   const scrollRef = useRef<HTMLDivElement>(null);
   const Hit = ({ hit }: { hit: ISearch }) => (
-    <article key={hit.id} className="search-item">
-      <Image
-        src={
-          BASE_URL +
-          (hit.anh_dai_dien.formats?.small?.url ??
-            hit.anh_dai_dien.formats?.thumbnail.url ??
-            hit.anh_dai_dien.url)
-        }
-        alt={hit.ten_bai_viet}
-        width={
-          hit.anh_dai_dien.formats?.small?.width ??
-          hit.anh_dai_dien.formats?.thumbnail.width ??
-          hit.anh_dai_dien.width
-        }
-        height={
-          hit.anh_dai_dien.formats?.small?.height ??
-          hit.anh_dai_dien.formats?.thumbnail.height ??
-          hit.anh_dai_dien.height
-        }
-      />
-      <div
-        dangerouslySetInnerHTML={{
-          __html: he.decode(hit._highlightResult.ten_bai_viet["value"]),
-        }}
-      />
-      <p>{hit.noi_dung_bai_viet.mo_ta}</p>
+    <article key={hit.id} className="flex items-start p-4 space-x-4 border-b">
+      {/* Ảnh bên trái */}
+      <div className="flex-shrink-0">
+        <Image
+          src={
+            BASE_URL +
+            (hit.anh_dai_dien.formats?.small?.url ??
+              hit.anh_dai_dien.formats?.thumbnail.url ??
+              hit.anh_dai_dien.url)
+          }
+          alt={hit.ten_bai_viet}
+          width={hit.anh_dai_dien.formats?.small?.width ??
+            hit.anh_dai_dien.formats?.thumbnail.width ??
+            hit.anh_dai_dien.width}
+          height={hit.anh_dai_dien.formats?.small?.height ??
+            hit.anh_dai_dien.formats?.thumbnail.height ??
+            hit.anh_dai_dien.height}
+          className="w-24 h-24 object-cover rounded-lg"
+        />
+      </div>
+
+      {/* Nội dung bên phải */}
+      <div className="flex-1">
+        {/* Tiêu đề với highlight */}
+        <h3
+          className="text-lg font-semibold text-black line-clamp-2 search-item"
+          dangerouslySetInnerHTML={{
+            __html: he.decode(hit._highlightResult.ten_bai_viet["value"]),
+          }}
+        />
+
+        {/* Mô tả bài viết */}
+        <p className="mt-2 text-sm text-gray-600 line-clamp-3">
+          {hit.noi_dung_bai_viet.mo_ta}
+        </p>
+      </div>
     </article>
   );
+
   const search = async (reset = false) => {
     if (isLoading || (!reset && !hasMore)) return; // Không tải nếu đang tải hoặc hết dữ liệu
     setIsLoading(true);
@@ -149,22 +160,42 @@ const Search = () => {
   }, [query]);
 
   return (
-    <div className="relative w-full z-10 ">
+    <div className="relative w-full z-10">
+      {/* Input search */}
       <input
-        className="text-black"
+        className="w-full px-4 py-2 text-black bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         type="search"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <div className="max-h-[500px] overflow-scroll fixed bg-white bg-opacity-75 text-black" ref={scrollRef}>
-        {results.map((hit) => (
-          <Hit key={hit.id} hit={hit} />
-        ))}
+
+      {/* Kết quả tìm kiếm */}
+      <div
+        className="absolute mt-2 w-full max-h-[500px] overflow-y-auto bg-white shadow-lg rounded-lg text-black border border-gray-200"
+        ref={scrollRef}
+      >
+        {results.length > 0 ? (
+          results.map((hit) => (
+            <div
+              key={hit.id}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 border-gray-200"
+            >
+              <Hit hit={hit} />
+            </div>
+          ))
+        ) : (
+          !isLoading && <p className="p-4 text-gray-500">Không tìm thấy kết quả.</p>
+        )}
       </div>
-      {isLoading && <p>Đang tải...</p>}
-      {!hasMore && <p>Đã tải hết kết quả.</p>}
+
+      {/* Thông báo tải thêm */}
+      {isLoading && <p className="mt-2 text-gray-500">Đang tải...</p>}
+      {!hasMore && !isLoading && results.length > 0 && (
+        <p className="mt-2 text-gray-500">Đã tải hết kết quả.</p>
+      )}
     </div>
+
   );
 };
 

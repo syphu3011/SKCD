@@ -175,7 +175,7 @@ body {
   justify-content: center ;
 }
 .search-item em {
-  background-color: yellow;
+  background-color: yellow !important;
   color: #171717;
 }
 @media (min-width: 768px) {
