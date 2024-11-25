@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["127.0.0.1"], // Thêm hostname của bạn vào danh sách
   },
+  reactStrictMode: false
 };
 
 export default nextConfig;
