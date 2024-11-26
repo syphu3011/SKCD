@@ -47,6 +47,7 @@ const Search = () => {
     window.onscroll = function () { };
   };
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const Hit = ({ hit }: { hit: ISearch }) => (
     <article key={hit.id} className="flex items-start p-4 space-x-4 border-b">
       {/* Ảnh bên trái */}
@@ -154,40 +155,62 @@ const Search = () => {
   }, [query, page, hasMore]);
   // Tìm kiếm khi query thay đổi
   useEffect(() => {
-    console.log("ủa j kì z")
-    console.log(page)
     search(true); // Reset kết quả
   }, [query]);
+  // Xử lý đóng khi bấm ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setResults([]); // Đóng kết quả tìm kiếm
+        setQuery('')
+        unlockScroll()
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="relative w-full z-10">
+    <div className="w-full z-10" ref={containerRef}>
       {/* Input search */}
       <input
-        className="w-full px-4 py-2 text-black bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full h-full px-4 py-2 text-black bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         type="search"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+
       />
 
       {/* Kết quả tìm kiếm */}
-      <div
-        className="absolute mt-2 w-full max-h-[500px] overflow-y-auto bg-white shadow-lg rounded-lg text-black border border-gray-200"
-        ref={scrollRef}
-      >
-        {results.length > 0 ? (
-          results.map((hit) => (
-            <div
-              key={hit.id}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 border-gray-200"
-            >
-              <Hit hit={hit} />
-            </div>
-          ))
-        ) : (
-          !isLoading && <p className="p-4 text-gray-500">Không tìm thấy kết quả.</p>
-        )}
-      </div>
+      {results.length ?
+        (
+        <div
+          className="absolute left-0 mx-[20px] mt-2 w-full max-h-[500px] overflow-y-auto bg-white shadow-lg rounded-lg text-black border border-gray-200"
+          ref={scrollRef}
+        >
+          {
+            results.map((hit) => (
+              <div
+                key={hit.id}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 border-gray-200"
+              >
+                <Hit hit={hit} />
+              </div>
+            ))
+          }
+        </div>
+      ):(
+        <div></div>
+      )}
+
 
       {/* Thông báo tải thêm */}
       {isLoading && <p className="mt-2 text-gray-500">Đang tải...</p>}

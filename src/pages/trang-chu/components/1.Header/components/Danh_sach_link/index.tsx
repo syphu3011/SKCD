@@ -21,7 +21,9 @@ const Danh_sach_link: React.FC<IDanh_sach_link> = ({ danh_sach_link }) => {
           <InfiniteHits hitComponent={Hit} />
         </InstantSearch> */}
         {
-          Search()
+          <div className="flex w-1/12 h-4 absolute right-20 top-4">
+            <Search></Search>
+          </div>
         }
       </>
     );
