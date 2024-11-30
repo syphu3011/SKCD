@@ -10,7 +10,7 @@ const Header: React.FC<IHeader> = ({ Logo, skcd_link_don_gians}) => {
       <div className="flex justify-center w-full lg:p-10 p-4">
         {LogoProcessed}
       </div>
-      <div className="flex-column justify-center justify-items-center bg-indigo-900 p-4 relative">
+      <div className="flex-column justify-center justify-items-center bg-indigo-900 p-4 relative md:h-auto h-[56px]">
         {Danh_sach_linkProcessed}
       </div>
     </div>
